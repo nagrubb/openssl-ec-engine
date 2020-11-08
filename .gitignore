@@ -1,0 +1,5 @@
+build
+tester
+*.dylib
+*.pem
+*.der
