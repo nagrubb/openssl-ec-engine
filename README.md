@@ -19,32 +19,20 @@ make
 ```
 
 # Setup
-This is a little bit complicated because it varies from platform to platform. However, the
-following instructions are assuming you are using macOS with OpenSSL installed from Brew:
+This is a little bit complicated because it varies from platform to platform. However, the following instructions are assuming you are using macOS with OpenSSL installed from Brew:
+1. First figure out where OpenSSL's ENGINESDIR is (NOTE: This will only work for Brew's OpenSSL, not macOS's default install). To do this, run: `openssl version -a | grep ENGINESDIR`
+2. Based on the above, lets say our ENGINESDIR was "/usr/local/Cellar/openssl@1.1/1.1.1h/lib/engines-1.1" so lets export that to make future instructions easier. For example run: `export ENGINESDIR=/usr/local/Cellar/openssl@1.1/1.1.1h/lib/engines-1.1`
+3. Now from our build directory, lets symlink our engine into the engines directory (NOTE: We remove the lib because OpenSSL doesn't handle the lib prefix well). To do this, run: `ln -s $(pwd)/libng.dylib ${ENGINESDIR}/ng.dylib`
+4. Double check this symlink worked `ls -lah ${ENGINESDIR}`. Output should look something like this:
 ```
-# First figure out where OpenSSL's ENGINESDIR is (NOTE: This will only work for Brew's OpenSSL, not macOS's default install)
-openssl version -a | grep ENGINESDIR
-
-# Based on the above, lets say our ENGINESDIR was "/usr/local/Cellar/openssl@1.1/1.1.1h/lib/engines-1.1" so lets export that
-# to make future instructions easier
-export ENGINESDIR=/usr/local/Cellar/openssl@1.1/1.1.1h/lib/engines-1.1
-
-# Now from our build directory, lets symlink our engine into the engines directory (NOTE: We remove the lib because OpenSSL doesn't handle the lib prefix well)
-ln -s $(pwd)/libng.dylib ${ENGINESDIR}/ng.dylib
-
-# Double check this symlink worked (this should )
-ls -lah ${ENGINESDIR}
-#^ The above should output something like
-#libng.dylib -> /Users/terminator/openssl-vault/build/ng.dylib
-
-
-# Double check openssl sees our engine
-openssl engine -t ng
-#^ The above should output something like
-#(ng) ng example engine by Nathan Grubb
-#Loaded: (libng) ng example engine by Nathan Grubb
-#ng_init called!
-#     [ available ]
+libng.dylib -> /Users/terminator/openssl-vault/build/ng.dylib
+```
+5. Double check openssl sees our engine, by running `openssl engine -t ng`. Output should look something like this:
+```
+(ng) ng example engine by Nathan Grubb
+Loaded: (libng) ng example engine by Nathan Grubb
+ng_init called!
+     [ available ]
 ```
 
 # Test
